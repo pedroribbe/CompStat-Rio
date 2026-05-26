@@ -18,14 +18,17 @@ function urlWith(area: number | null): string {
 /** Entra num relatório criando entrada no histórico (permite "voltar"). */
 export function pushArea(area: number): void {
   window.history.pushState(null, '', urlWith(area))
+  window.dispatchEvent(new Event('urlchange'))
 }
 
 /** Volta à página inicial criando entrada no histórico. */
 export function pushHome(): void {
   window.history.pushState(null, '', urlWith(null))
+  window.dispatchEvent(new Event('urlchange'))
 }
 
 /** Troca a área do relatório atual sem nova entrada no histórico (seletor). */
 export function replaceArea(area: number): void {
   window.history.replaceState(null, '', urlWith(area))
+  window.dispatchEvent(new Event('urlchange'))
 }

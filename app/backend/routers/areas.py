@@ -96,7 +96,7 @@ def get_area_map(area_id: int) -> Dict[str, Any]:
 
     return {
         "occurrences": G.feature_collection(occ_features),
-        "areaPolygon": area_polygon,
+        "areaPolygon": G.feature_collection([area_polygon] if area_polygon else []),
         "cameras": G.feature_collection(cam_features),
         "urbanFactors": G.feature_collection(fat_features),
         "criticalSegments": G.feature_collection(crit_features),

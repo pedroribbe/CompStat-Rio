@@ -1,7 +1,8 @@
 """Constantes e caminhos da camada de normalização CompStat Rio."""
 from pathlib import Path
 
-BASE = Path("/Users/pedrorezende/SegurancaPublica/claude_impact_lab_compstat_rio")
+# Detecta automaticamente a raiz do repo (2 níveis acima deste arquivo)
+BASE = Path(__file__).resolve().parents[1]
 DADOS = BASE / "dados"
 OUT = BASE / "dados_normalizados"
 OUT_SILVER = OUT / "silver"

@@ -23,6 +23,16 @@ export default function App() {
     return () => window.removeEventListener('popstate', onPop)
   }, [])
 
+  // Acompanha mudanças programáticas na URL (seletor de área).
+  useEffect(() => {
+    const onUrlChange = () => {
+      setArea(readAreaFromUrl())
+      setView(readViewFromUrl())
+    }
+    window.addEventListener('urlchange', onUrlChange)
+    return () => window.removeEventListener('urlchange', onUrlChange)
+  }, [])
+
   const openPredictive = () => {
     pushPredictive()
     setView('preditivo')

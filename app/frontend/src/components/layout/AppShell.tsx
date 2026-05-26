@@ -5,7 +5,6 @@ import { useReport } from '../../state/reportContext'
 import { onCopilotOpen } from '../copilot/copilotBus'
 import { CopilotChat } from '../copilot/CopilotChat'
 import { ReportView } from '../report/ReportView'
-import { DraftBanner } from './DraftBanner'
 import { SectionNav } from './SectionNav'
 import { TopBar } from './TopBar'
 
@@ -30,7 +29,6 @@ export function AppShell({ onGoHome, onOpenPredictive }: { onGoHome: () => void;
       </aside>
 
       <main className="shell__main">
-        <DraftBanner />
         <div className="shell__scroll">
           <ReportView />
         </div>
