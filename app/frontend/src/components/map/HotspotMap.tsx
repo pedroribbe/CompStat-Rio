@@ -77,9 +77,7 @@ export function HotspotMap({ pkg }: { pkg: MapPackage }) {
 
   // init uma vez
   useEffect(() => {
-    console.log('[DEBUG] useEffect init - elRef:', !!elRef.current, 'mapRef:', !!mapRef.current)
     if (!elRef.current || mapRef.current) return
-    console.log('[DEBUG] Creating map instance...')
     const b = bounds(pkg)
     const map = new maplibregl.Map({
       container: elRef.current,
@@ -88,7 +86,6 @@ export function HotspotMap({ pkg }: { pkg: MapPackage }) {
       zoom: 13,
       attributionControl: { compact: true },
     })
-    console.log('[DEBUG] Map instance created:', !!map)
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right')
     // tiles do basemap podem falhar (rede/CDN) — apenas registramos; as camadas
     // de dados (polígono, manchas, pontos) são locais e seguem renderizando
@@ -96,7 +93,6 @@ export function HotspotMap({ pkg }: { pkg: MapPackage }) {
     mapRef.current = map
 
     map.on('load', () => {
-      console.log('[DEBUG] Map load event fired! Adding sources and layers...')
       // ---- fontes ----
       map.addSource('occ', { type: 'geojson', data: pkg.occurrences })
       map.addSource('area', { type: 'geojson', data: pkg.areaPolygon })
@@ -246,12 +242,7 @@ export function HotspotMap({ pkg }: { pkg: MapPackage }) {
         map.on('mouseleave', id, () => (map.getCanvas().style.cursor = ''))
       }
 
-      console.log('[DEBUG] Bounds:', b)
-      if (b) {
-        console.log('[DEBUG] Fitting bounds:', b.toArray())
-        map.fitBounds(b, { padding: 48, duration: 0 })
-      }
-      console.log('[DEBUG] Setting ready to true')
+      if (b) map.fitBounds(b, { padding: 48, duration: 0 })
       setReady(true)
     })
 
