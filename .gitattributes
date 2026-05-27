@@ -1,0 +1,17 @@
+* text=auto eol=lf
+
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.ico  binary
+*.pdf  binary
+*.docx binary
+*.xlsx binary
+*.xls  binary
+*.mp4  binary
+*.shp  binary
+*.shx  binary
+*.dbf  binary
+*.cpg  binary
+*.prj  binary
