@@ -31,3 +31,12 @@ dist/
 # que NÃO são consumidas pelo frontend. Os artefatos consumidos vivem em
 # app/frontend/public/compstat/ e ESSES sim são versionados.
 /modelo_preditivo/output/
+
+# === Artefatos de compilação LaTeX (docs/guia/) ===
+# O .tex é versionado; o PDF e os arquivos auxiliares (aux, log, toc, out)
+# são gerados localmente ou no Overleaf.
+/docs/guia/*.aux
+/docs/guia/*.log
+/docs/guia/*.out
+/docs/guia/*.toc
+/docs/guia/*.pdf
