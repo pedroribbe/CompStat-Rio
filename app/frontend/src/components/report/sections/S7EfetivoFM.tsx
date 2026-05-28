@@ -49,6 +49,17 @@ export function S7EfetivoFM({ rows, index }: { rows: EfetivoRow[]; index: number
           <line x1="12" y1="16" x2="12" y2="12" />
           <line x1="12" y1="8" x2="12.01" y2="8" />
         </svg>
+        Como esta sugestão é gerada: é uma recomendação da IA construída a partir de dois insumos —{' '}
+        <strong>pico temporal</strong> (dia e horário de maior incidência) e{' '}
+        <strong>deslocamento do autor</strong> (indício extraído de RELINT e Disque Denúncia, tratado como inteligência, não como fato).
+        Esta sugestão <strong>não usa o score de prioridade</strong>. A decisão final é sempre do gestor humano.
+      </p>
+      <p className="map-note">
+        <svg className="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="16" x2="12" y2="12" />
+          <line x1="12" y1="8" x2="12.01" y2="8" />
+        </svg>
         Sugestões respeitam o teto de 600 agentes para todas as áreas. Dimensionamento final é decisão do comando da FM.
       </p>
     </SectionCard>
