@@ -3,6 +3,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { fetchAreasOverview } from '../../api/reports'
 import { AreaCard } from './AreaCard'
+import { ViewTabs } from '../layout/ViewTabs'
 
 export function HomePage({ onSelectArea, onOpenPredictive }: { onSelectArea: (id: number) => void; onOpenPredictive: () => void }) {
   const { data, isLoading } = useQuery({
@@ -26,9 +27,9 @@ export function HomePage({ onSelectArea, onOpenPredictive }: { onSelectArea: (id
           <strong>CompStat Rio</strong>
           <span className="home__brand-sub">Inteligência de Segurança Pública</span>
         </div>
-        <button type="button" className="btn btn--primary" style={{ marginLeft: 'auto' }} onClick={onOpenPredictive}>
-          Mapa Preditivo de Risco
-        </button>
+        <div className="home__topbar-center">
+          <ViewTabs view="home" onOpenHome={() => {}} onOpenPredictive={onOpenPredictive} />
+        </div>
       </header>
 
       <main className="home__body">

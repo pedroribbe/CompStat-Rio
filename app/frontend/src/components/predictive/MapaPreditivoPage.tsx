@@ -8,6 +8,7 @@ import { PredictiveMapPanel } from './PredictiveMapPanel'
 import { DriversTable } from './DriversTable'
 import { ValidationMetrics } from './ValidationMetrics'
 import { CoefficientsTable } from './CoefficientsTable'
+import { ViewTabs } from '../layout/ViewTabs'
 
 type Tab = 'drivers' | 'metricas' | 'coeficientes'
 
@@ -26,14 +27,14 @@ export function MapaPreditivoPage({ onGoHome }: { onGoHome: () => void }) {
   return (
     <div className="pred-page">
       <header className="pred-header">
-        <button type="button" className="btn btn--ghost btn--sm" onClick={onGoHome}>
-          ← Panorama
-        </button>
         <div className="pred-header__title">
           <strong>Mapa Preditivo de Risco</strong>
           <span className="pred-header__sub">
             Modelo logístico · horizontes T+1/T+2/T+4 · hexágonos H3
           </span>
+        </div>
+        <div className="pred-header__center">
+          <ViewTabs view="preditivo" onOpenHome={onGoHome} onOpenPredictive={() => {}} />
         </div>
       </header>
 

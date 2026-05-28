@@ -204,6 +204,43 @@
   color: var(--primary);
 }
 
+/* Segmented control — navegação primária entre Panorama e Mapa Preditivo. */
+.view-tabs {
+  display: inline-flex;
+  gap: var(--sp-1);
+  padding: 4px;
+  background: var(--surface-sunken);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.view-tabs__btn {
+  padding: var(--sp-1) var(--sp-3);
+  border: 0;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+  font-size: var(--fs-2);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: color 160ms var(--ease-out), background 160ms var(--ease-out);
+  white-space: nowrap;
+}
+.view-tabs__btn:hover {
+  color: var(--text-body);
+}
+.view-tabs__btn--active {
+  background: var(--surface-panel);
+  color: var(--primary);
+  font-weight: var(--fw-semibold);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+.view-tabs__btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
 /* Area selector (institucional, compacto) */
 .area-selector {
   display: flex;
@@ -1993,6 +2030,12 @@
   padding: 0 var(--sp-5);
   background: var(--surface-panel);
   border-bottom: 1px solid var(--border);
+}
+.home__topbar-center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  min-width: 0;
 }
 .home__mark {
   display: grid;

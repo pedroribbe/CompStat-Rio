@@ -37,6 +37,12 @@
   font-size: var(--fs-xs);
   color: var(--text-muted);
 }
+.pred-header__center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  min-width: 0;
+}
 
 /* ---------------------------------------------------------------- Layout */
 .pred-layout {
