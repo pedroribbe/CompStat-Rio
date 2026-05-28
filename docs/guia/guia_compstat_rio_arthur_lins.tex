@@ -414,6 +414,114 @@ notebook:
         \texttt{fe\_area\_*}, com uma área omitida como referência.
 \end{enumerate}
 
+\subsection{Como interpretar o modelo}
+\label{ssec:pred_interpret}
+
+A escolha de um logit linear nos regressores não é casual. Modelos mais
+flexíveis (redes neurais, gradient boosting, random forest) podem
+oferecer ganhos marginais de precisão, mas \emph{ao custo de uma caixa
+preta}: o gestor recebe uma probabilidade prevista sem conseguir
+explicar de onde ela veio. Aqui, a leitura é direta --- cada coeficiente
+$\beta_k$ tem um significado próprio, em uma fórmula que cabe numa
+linha. É essa transparência que sustenta o uso responsável da
+ferramenta na decisão pública.
+
+\paragraph{O que cada coeficiente significa.} No logit, o coeficiente
+$\beta_k$ é o efeito de um aumento unitário no regressor $x_k$ sobre o
+\emph{log-odds} de o crime ocorrer. Equivalentemente, $\exp(\beta_k)$ é
+o \emph{odds ratio} --- o fator que multiplica a razão de chances de
+$y{=}1$ contra $y{=}0$ quando $x_k$ aumenta em uma unidade, mantendo
+todo o resto constante. Em linguagem natural:
+
+\begin{itemize}
+  \item $\exp(\beta_k) > 1$: a variável \emph{aumenta} a chance de crime.
+  \item $\exp(\beta_k) < 1$: a variável \emph{reduz} a chance de crime.
+  \item $\exp(\beta_k) \approx 1$: efeito praticamente neutro.
+\end{itemize}
+
+\paragraph{Exemplo isolado.} O coeficiente estimado para
+\texttt{y\_lag1} (houve crime no mesmo hex na semana anterior) é
+$\beta = +0{,}2346$. O odds ratio é $\exp(0{,}2346) \approx 1{,}26$.
+\textbf{Leitura para o gestor:} um hex que teve crime na semana
+passada enfrenta \emph{cerca de $26\%$ a mais de chance} de ter crime
+na próxima, comparado a um hex idêntico em todo o resto que não teve.
+Isto é a evidência quantitativa do mecanismo de \emph{near-repeat}
+\cite{JohnsonBowers2004, MohlerEtAl2011} que a literatura já documenta.
+
+\paragraph{Exemplo combinado: somando alavancas no log-odds.} Como o
+preditor linear é uma soma, basta somar os $\beta$'s relevantes para
+compor um cenário. Considere dois hexes hipotéticos, $A$ e $B$, na
+mesma área FM (mesmo $\alpha$), na mesma semana (mesma sazonalidade).
+A diferença está só nas variáveis abaixo:
+
+\begin{table}[H]
+  \centering
+  \small
+  \caption{Cenário ilustrativo: hex $A$ ``limpo'' versus hex $B$ com
+  três alavancas adversas. Coeficientes $\beta$ extraídos da rodada
+  atual de \texttt{coeficientes\_logit.csv} ($s{=}1$).}
+  \label{tab:exemplo_interpret}
+  \begin{tabular}{lrrrr}
+    \toprule
+    Variável & $\beta$ & $x_A$ & $x_B$ & Contribuição em $B$ \\
+    \midrule
+    \texttt{y\_lag1} (crime semana anterior)      & $+0{,}235$ & 0 & 1 & $+0{,}235$ \\
+    \texttt{W\_y\_lag1} (crime vizinhança)        & $+0{,}366$ & 0 & 1 & $+0{,}366$ \\
+    \texttt{n\_fat\_transito} (× 2 pontos)        & $+0{,}090$ & 0 & 2 & $+0{,}179$ \\
+    \texttt{n\_fat\_calcada}                       & $+0{,}054$ & 0 & 1 & $+0{,}054$ \\
+    \midrule
+    \textbf{Diferença no log-odds ($B - A$)}      &            &   &   & $\mathbf{+0{,}834}$ \\
+    \textbf{Odds ratio} $\exp(+0{,}834)$           &            &   &   & $\mathbf{\approx 2{,}30}$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\noindent\textbf{Tradução em risco absoluto.} Suponha que $A$ tem uma
+probabilidade base $P(A) = 10\%$ de crime na próxima semana (próximo da
+taxa observada no painel). Suas chances de crime são
+$\text{odds}(A) = 0{,}10/0{,}90 \approx 0{,}111$. Para $B$, multiplicamos
+pelo odds ratio: $\text{odds}(B) \approx 0{,}111 \times 2{,}30 \approx
+0{,}255$. Convertendo de volta para probabilidade:
+$P(B) = 0{,}255/(1+0{,}255) \approx 20\%$. \emph{Ou seja, $B$ tem cerca
+do dobro da probabilidade absoluta de $A$, mesmo na mesma área e
+semana.}
+
+\paragraph{Como ler coeficientes negativos.} O coeficiente de
+\texttt{orcrim\_CV} é $\beta = -1{,}90$, $\exp(-1{,}90) \approx
+0{,}15$. \textbf{Leitura:} hexágonos em território de domínio CV têm,
+em média no painel, cerca de $85\%$ \emph{menos} chance de roubo
+registrado em comparação a hexes em ``Sem domínio'', controlando por
+todo o resto. Isto \emph{não significa} que o CV reduz crime: é uma
+correlação observada, possivelmente por subnotificação ou por efeito
+inibidor sobre crime patrimonial em territórios sob controle de
+facções. A leitura correta é \emph{``estar em CV está associado a
+menos registros''}, nunca \emph{``CV causa menos crime''}.
+
+\paragraph{Coeficientes desprezíveis também informam.} O coeficiente
+de \texttt{n\_cameras} é $\beta = -0{,}003$, $\exp(-0{,}003) \approx
+0{,}997$. \textbf{Leitura:} uma câmera adicional no hex está associada
+a uma redução de cerca de $0{,}3\%$ nas chances --- praticamente
+nada. Isto não invalida câmeras como política pública (elas geram
+vídeo para investigação \emph{ex post}), mas mostra que, no painel
+observado, sua presença não diferencia hexes de alto e baixo risco
+\emph{ex ante}. O painel de variáveis acionáveis
+(seção~\ref{ssec:acionaveis}) já sinaliza esta variável na categoria
+\emph{Desprezível}.
+
+\paragraph{Resumo prático para o gestor.}
+\begin{enumerate}
+  \item \emph{Sinal} do $\beta$: positivo aumenta risco; negativo reduz.
+  \item \emph{Magnitude} de $\exp(\beta)$: distância de $1$ indica força.
+        Acima de $1{,}5$ é forte; entre $1{,}05$ e $1{,}5$ é moderado;
+        próximo de $1{,}00$ é desprezível.
+  \item \emph{Efeitos se somam no log-odds e se multiplicam nas odds.}
+        Combinações de fatores adversos podem dobrar ou triplicar a
+        probabilidade rapidamente.
+  \item \emph{Correlação, não causalidade.} Coeficientes orientam
+        \emph{prioridade}, não garantem que intervir naquela variável
+        reduzirá crime na mesma proporção.
+\end{enumerate}
+
 \subsection{Métricas de validação}
 \label{ssec:pred_metrics}
 
