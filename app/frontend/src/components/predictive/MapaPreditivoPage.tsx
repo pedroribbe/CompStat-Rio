@@ -6,6 +6,7 @@ import type { AreaMapa } from './types'
 import { MAPA_GERAL } from './predictiveMaps'
 import { PredictiveMapPanel } from './PredictiveMapPanel'
 import { DriversTable } from './DriversTable'
+import { ActionableFeaturesPanel } from './ActionableFeaturesPanel'
 import { ValidationMetrics } from './ValidationMetrics'
 import { CoefficientsTable } from './CoefficientsTable'
 import { ViewTabs } from '../layout/ViewTabs'
@@ -61,7 +62,12 @@ export function MapaPreditivoPage({ onGoHome }: { onGoHome: () => void }) {
           </div>
 
           <div className="pred-sidebar__body">
-            {tab === 'drivers' && <DriversTable filtroArea={filtroArea} />}
+            {tab === 'drivers' && (
+              <>
+                <DriversTable filtroArea={filtroArea} />
+                <ActionableFeaturesPanel />
+              </>
+            )}
             {tab === 'metricas' && <ValidationMetrics />}
             {tab === 'coeficientes' && <CoefficientsTable />}
           </div>
