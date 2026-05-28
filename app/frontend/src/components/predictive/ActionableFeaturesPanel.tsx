@@ -58,7 +58,7 @@ export function ActionableFeaturesPanel() {
       <p className="pred-actionable__lead">
         Variáveis sobre as quais o município pode agir. Os demais regressores do modelo —
         defasagens do próprio crime, efeitos fixos de área, sazonalidade e domínio de facção —
-        são úteis para prever mas não orientam intervenção.
+        são úteis para prever crime mas não orientam intervenção.
       </p>
 
       <div className="pred-table-wrap">
