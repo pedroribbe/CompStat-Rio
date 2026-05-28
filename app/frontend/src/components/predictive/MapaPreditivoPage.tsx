@@ -36,6 +36,7 @@ export function MapaPreditivoPage({ onGoHome }: { onGoHome: () => void }) {
         <div className="pred-header__center">
           <ViewTabs view="preditivo" onOpenHome={onGoHome} onOpenPredictive={() => {}} />
         </div>
+        <div className="pred-header__right" aria-hidden="true" />
       </header>
 
       <div className="pred-layout">

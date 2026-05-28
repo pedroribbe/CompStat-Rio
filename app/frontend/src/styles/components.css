@@ -2023,7 +2023,8 @@
   background: var(--surface-app);
 }
 .home__topbar {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: var(--sp-3);
   height: var(--topbar-h);
@@ -2031,11 +2032,18 @@
   background: var(--surface-panel);
   border-bottom: 1px solid var(--border);
 }
-.home__topbar-center {
-  flex: 1;
+.home__brand-wrap {
   display: flex;
-  justify-content: center;
+  align-items: center;
+  gap: var(--sp-3);
+  justify-self: start;
   min-width: 0;
+}
+.home__topbar-center {
+  justify-self: center;
+}
+.home__topbar-right {
+  justify-self: end;
 }
 .home__mark {
   display: grid;
