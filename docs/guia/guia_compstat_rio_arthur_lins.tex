@@ -393,7 +393,7 @@ notebook:
   \item \textbf{Sazonalidade harmônica} --- \texttt{week\_sin},
         \texttt{week\_cos} (ciclo anual) e \texttt{is\_holiday\_week}
         (semanas de feriado nacional/municipal).
-  \item \textbf{Fatores urbanos desagregados} --- sete componentes
+  \item \textbf{Fatores urbanos} --- sete componentes
         (\texttt{n\_fat\_calcada}, \texttt{n\_fat\_ilum},
         \texttt{n\_fat\_lixo}, \texttt{n\_fat\_mobil},
         \texttt{n\_fat\_sitrua}, \texttt{n\_fat\_transito},
@@ -414,32 +414,6 @@ notebook:
         \texttt{fe\_area\_*}, com uma área omitida como referência.
 \end{enumerate}
 
-\paragraph{Duas decisões econométricas registradas no notebook.}
-
-\emph{(D1) Remoção de \texttt{n\_fat\_total} por colinearidade
-mecânica.} O painel construído na Fase~2 incluía uma coluna agregada
-\texttt{n\_fat\_total} igual à soma dos sete componentes desagregados.
-O diagnóstico empírico sobre 40{.}716 observações mostrou:
-correlação de Pearson com a soma dos componentes igual a
-$1{,}000000$ (diferença máxima zero); VIF infinito (colinearidade
-perfeita); o próprio código confirma que é construída como
-\texttt{sum(n\_fat\_*)}. A coluna foi removida da matriz de
-regressores. As métricas não pioraram --- o que era esperado, dada a
-redundância mecânica.
-
-\emph{(D2) Correção da armadilha de dummy em ORCRIM.} A codificação
-original criava dummies para todas as categorias de domínio
-territorial (\texttt{CV}, \texttt{Milícia}, \texttt{TCP},
-\texttt{Sem domínio}), juntamente com o intercepto. Como a soma das
-dummies de uma variável categórica é igual ao vetor de 1's, isto gera
-\emph{colinearidade perfeita} com o intercepto (a chamada
-\emph{dummy trap}). A correção foi adotar
-\emph{``Sem domínio''} como categoria de referência explícita
-(omitida); cada coeficiente das demais dummies passa a ser
-interpretado como o efeito relativo à categoria de referência. A
-mudança não afeta a probabilidade prevista para uma observação, mas
-torna a leitura dos coeficientes correta e estável.
-
 \subsection{Métricas de validação}
 \label{ssec:pred_metrics}
 
@@ -453,7 +427,7 @@ teste para cada horizonte de previsão:
         desbalanceamento de classes (eventos raros).
   \item \textbf{PAI top10 (Prediction Accuracy Index)} ---
         razão entre a fração de eventos capturada nos 10\% de hexes de
-        maior risco previsto e a fração de área coberta por esses 10\%.
+        maior risco previsto e a fração de área coberta por esses 10\%- \textbf{É a principal métrica para policy, na opinião dos autores, porque reflete a eficiência da alocação de recursos: quanto mais eventos capturados em menos área, melhor.}
         Métrica padrão na literatura de \emph{predictive policing}
         \cite{ChaineyEtAl2008}.
   \item \textbf{Moran's I dos resíduos} --- autocorrelação espacial

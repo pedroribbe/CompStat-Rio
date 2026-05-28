@@ -40,3 +40,4 @@ dist/
 /docs/guia/*.out
 /docs/guia/*.toc
 /docs/guia/*.pdf
+/docs/guia/*.synctex.gz
