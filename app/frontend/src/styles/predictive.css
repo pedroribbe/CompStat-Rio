@@ -170,6 +170,33 @@
   padding: var(--sp-4);
 }
 
+/* Nota explicativa acima de tabelas/painéis do preditivo. Mesma linguagem
+   visual do .map-note usado em outras seções do relatório. */
+.pred-note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-2);
+  margin: 0 0 var(--sp-3) 0;
+  font-size: var(--fs-xs);
+  line-height: var(--lh-snug, 1.4);
+  color: var(--text-muted);
+  background: var(--surface-sunken);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: var(--sp-2) var(--sp-3);
+}
+.pred-note .icon {
+  width: 14px;
+  height: 14px;
+  margin-top: 2px;
+  color: var(--text-muted);
+  flex: none;
+}
+.pred-note strong {
+  color: var(--text-body);
+  font-weight: 600;
+}
+
 /* ---------------------------------------------------------------- Tabelas */
 .pred-table-wrap {
   border: 1px solid var(--border);

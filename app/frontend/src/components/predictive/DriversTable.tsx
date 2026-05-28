@@ -35,7 +35,21 @@ export function DriversTable({ filtroArea }: { filtroArea?: string }) {
   const showArea = !filtroArea
 
   return (
-    <div className="pred-table-wrap">
+    <>
+      <p className="pred-note">
+        <svg className="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="16" x2="12" y2="12" />
+          <line x1="12" y1="8" x2="12.01" y2="8" />
+        </svg>
+        <span>
+          O <strong>rank</strong> ordena os hexágonos <strong>dentro de cada área da Força Municipal</strong> (top 5 por área),
+          não no município inteiro. Isto garante que todas as áreas apareçam representadas — porém,{' '}
+          <strong>P(crime) entre áreas diferentes não é diretamente comparável</strong>: um rank 1 numa área pode ter risco
+          absoluto menor que um rank 5 noutra.
+        </span>
+      </p>
+      <div className="pred-table-wrap">
       <table className="pred-table">
         <thead>
           <tr>
@@ -78,6 +92,7 @@ export function DriversTable({ filtroArea }: { filtroArea?: string }) {
           })}
         </tbody>
       </table>
-    </div>
+      </div>
+    </>
   )
 }
