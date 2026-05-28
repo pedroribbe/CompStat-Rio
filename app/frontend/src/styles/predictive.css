@@ -174,7 +174,10 @@
 .pred-table-wrap {
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  overflow: hidden;
+  /* rolagem horizontal quando a tabela é mais larga que o painel (sidebar
+     estreita em telas menores). overflow-y fica visível porque o scroll
+     vertical é feito pelo .pred-sidebar__body que envolve a tabela. */
+  overflow-x: auto;
 }
 .pred-table-wrap--scroll {
   max-height: 100%;
@@ -182,6 +185,9 @@
 }
 .pred-table {
   width: 100%;
+  /* largura mínima para não espremer as colunas de driver; abaixo disso
+     o wrapper passa a rolar lateralmente. */
+  min-width: 640px;
   border-collapse: collapse;
   font-size: var(--fs-sm);
 }
@@ -245,6 +251,7 @@
 .pred-driver {
   display: inline;
   color: var(--text-body);
+  white-space: nowrap;
 }
 .pred-driver__pct {
   margin-left: var(--sp-1);
