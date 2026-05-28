@@ -440,6 +440,16 @@
   color: var(--text-muted);
   max-width: 32ch;
 }
+.pred-actionable__footnote {
+  margin: var(--sp-2) 0 0 0;
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  line-height: var(--lh-snug, 1.4);
+}
+.pred-actionable__footnote strong {
+  color: var(--text-body);
+  font-weight: 600;
+}
 .pred-actionable__caveat {
   margin: var(--sp-3) 0 0 0;
   padding: var(--sp-2) var(--sp-3);

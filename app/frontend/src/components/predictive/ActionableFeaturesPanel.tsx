@@ -68,7 +68,7 @@ export function ActionableFeaturesPanel() {
               <th>Variável</th>
               <th>Categoria</th>
               <th>Direção</th>
-              <th>Magnitude</th>
+              <th>Magnitude*</th>
               <th>Órgãos responsáveis</th>
               <th>Nota</th>
             </tr>
@@ -94,6 +94,12 @@ export function ActionableFeaturesPanel() {
         </table>
       </div>
 
+      <p className="pred-actionable__footnote">
+        <strong>*</strong> Categorias de magnitude pelo valor absoluto do coeficiente β:
+        {' '}<strong>Notável</strong> |β| &gt; 0,05;
+        {' '}<strong>Leve</strong> 0,01 ≤ |β| ≤ 0,05;
+        {' '}<strong>Desprezível</strong> |β| &lt; 0,01.
+      </p>
       <p className="pred-actionable__caveat">
         Os coeficientes vêm de um modelo preditivo, não de um experimento causal: a correlação
         observada justifica priorização, não causalidade. Para câmeras, há ainda viés de seleção
