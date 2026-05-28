@@ -62,17 +62,18 @@ export function MapaPreditivoPage({ onGoHome }: { onGoHome: () => void }) {
           </div>
 
           <div className="pred-sidebar__body">
-            {tab === 'drivers' && (
-              <>
-                <DriversTable filtroArea={filtroArea} />
-                <ActionableFeaturesPanel />
-              </>
-            )}
+            {tab === 'drivers' && <DriversTable filtroArea={filtroArea} />}
             {tab === 'metricas' && <ValidationMetrics />}
             {tab === 'coeficientes' && <CoefficientsTable />}
           </div>
         </aside>
       </div>
+
+      {tab === 'drivers' && (
+        <section className="pred-below">
+          <ActionableFeaturesPanel />
+        </section>
+      )}
     </div>
   )
 }
