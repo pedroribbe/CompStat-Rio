@@ -1,0 +1,786 @@
+% =============================================================================
+% CompStat Rio — Guia de Leitura da Aplicação
+% Autor: Arthur Lins  |  Compila com pdflatex (Overleaf-friendly).
+% Figuras esperadas em ./figuras/ (geradas em prompt separado).
+% =============================================================================
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazilian]{babel}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{longtable}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{float}  % habilita o especificador [H] para travar figuras na posição
+\usepackage[
+  colorlinks=true,
+  linkcolor=blue!50!black,
+  urlcolor=blue!60!black,
+  citecolor=blue!60!black
+]{hyperref}
+
+\graphicspath{{figuras/}}
+
+% --- Inclusão de figura com fallback (compila antes dos PNGs existirem) ---
+% Usamos \detokenize no fallback para imprimir nomes com '_' literalmente,
+% sem que o TeX interprete underscore como subscrito fora de modo matemático.
+\newcommand{\figfile}[2]{%
+  \IfFileExists{figuras/#1}{%
+    \includegraphics[width=#2]{#1}%
+  }{%
+    \fbox{\parbox{#2}{\centering\small\itshape%
+      [figura pendente: \texttt{\detokenize{#1}}]}}%
+  }%
+}
+
+% --- Metadados ---
+\title{%
+  \textbf{CompStat Rio} \\[0.4em]
+  \large{Guia de Leitura da Aplicação} \\[0.3em]
+  \normalsize\itshape Inteligência territorial para segurança pública municipal
+}
+\author{Arthur Lins}
+\date{\today}
+
+\begin{document}
+
+% --- Capa ---
+\begin{titlepage}
+  \centering
+  \vspace*{2cm}
+  {\Huge \textbf{CompStat Rio}} \\[0.6cm]
+  {\Large Guia de Leitura da Aplicação} \\[0.4cm]
+  {\large\itshape Inteligência territorial para segurança pública municipal} \\[2cm]
+
+  {\large \textbf{Arthur Lins}} \\[0.3cm]
+  {\large \today}
+  \vfill
+  \noindent\rule{\linewidth}{0.4pt}
+  \begin{flushleft}
+    \small
+    Documento didático destinado à alta gestão pública. Apresenta o que a
+    aplicação CompStat Rio entrega, como navegar nela, e a especificação
+    econométrica por trás do mapa preditivo de risco. \\[0.3em]
+    \emph{Decisão final humana. A plataforma produz rascunho auditável; a
+    equipe valida antes de qualquer ação.}
+  \end{flushleft}
+  \noindent\rule{\linewidth}{0.4pt}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+% =============================================================================
+\section{Introdução}
+\label{sec:introducao}
+
+O \textbf{CompStat Rio} é a plataforma de inteligência territorial da
+Prefeitura do Rio de Janeiro voltada para segurança pública municipal.
+O modelo de gestão CompStat realiza reuniões periódicas em que o Prefeito
+e a alta gestão decidem, com base em dados, onde a Força Municipal (FM)
+deve atuar e quais fatores urbanos devem ser resolvidos pelos órgãos
+responsáveis (Comlurb, RioLuz, Seconserva, CET-Rio, SEOP, SMAS, SMTR,
+GM-Rio).
+
+\paragraph{O problema dos silos.} As fontes de dados — ocorrências
+georreferenciadas, denúncias do Disque Denúncia, relatórios de
+inteligência (RELINTs), fatores urbanos mapeados em campo e câmeras —
+vivem em sistemas isolados. Cruzar manualmente esses silos para produzir
+um Relatório Analítico de Área consome horas que poderiam ser dedicadas à
+análise. O CompStat Rio automatiza esse cruzamento.
+
+\paragraph{Três camadas, uma plataforma.} A inteligência central
+sobrepõe, no mesmo ponto do mapa, três camadas:
+\begin{itemize}
+  \item \textbf{Mancha criminal} — onde o crime acontece, na forma de
+        ocorrências de roubo e furto georreferenciadas.
+  \item \textbf{Fator urbano} — qual condição ambiental facilita o crime
+        (iluminação deficiente, calçada obstruída, vegetação cobrindo
+        postes, mobiliário abandonado, etc.). É a alavanca da
+        intervenção municipal.
+  \item \textbf{Dinâmica criminal} — como o crime acontece (modus
+        operandi, rotas de fuga, perfis de vítima), inferida do texto
+        livre de RELINTs e Disque Denúncia.
+\end{itemize}
+
+\paragraph{O papel da IA.} A inteligência artificial amplifica a análise
+— sintetiza texto, cruza dados e propõe rascunhos — mas \emph{nunca
+substitui o gestor}. Os guardrails da plataforma são detalhados na
+seção~\ref{sec:guardrails}.
+
+\begin{figure}[H]
+  \centering
+  \figfile{01_home_lista_areas.png}{0.95\linewidth}
+  \caption{Página inicial do CompStat Rio: lista de áreas da Força
+  Municipal ordenadas por urgência (volume de ocorrências de roubo e
+  furto no período do piloto). Selecionar uma área abre o relatório
+  analítico completo.}
+  \label{fig:home}
+\end{figure}
+
+% =============================================================================
+\section{Como navegar}
+\label{sec:navegar}
+
+A aplicação tem duas visões principais, alternadas por um seletor de
+abas centralizado no topo:
+
+\begin{itemize}
+  \item \textbf{Panorama Operacional} — a entrada padrão: lista de áreas
+        prioritárias e, dentro de cada uma, o relatório analítico
+        completo.
+  \item \textbf{Mapa Preditivo} — a previsão econométrica de risco para
+        as próximas 1, 2 e 4 semanas (seção~\ref{sec:preditivo}). \textbf{\emph{Essa é a maior inovação do nosso produto, e a que temos mais esperança de que gere impacto real na produtividade de gestores públicos.}}
+\end{itemize}
+
+\begin{figure}[H]
+  \centering
+  \figfile{02_topbar_abas.png}{0.95\linewidth}
+  \caption{Seletor de abas no topo. As duas visões têm igual destaque
+  visual; a aba ativa fica em azul-petróleo.}
+  \label{fig:topbar}
+\end{figure}
+
+\noindent A lista de áreas (figura~\ref{fig:home}) é ordenada por
+ranking de volume de ocorrências. Ao clicar em uma área, o usuário entra
+no \textbf{Relatório Analítico de Área}, que segue o formato dos
+Relatórios de Inteligência (RELINTs) já adotados pela FM. Cada relatório
+é estruturado em 10 seções (S1 a S10), descritas a seguir.
+
+% =============================================================================
+\section{Panorama Operacional: o Relatório Analítico de Área}
+\label{sec:panorama}
+
+\subsection{S1 — Identificação}
+Cabeçalho da área: nome, polígono oficial da FM, bairros principais,
+domínios territoriais de organizações criminosas identificados, AISP e
+contagem de trechos críticos detectados pelo motor de cruzamento.
+
+\begin{figure}[H]
+  \centering
+  \figfile{04_secao_s1_identificacao.png}{0.95\linewidth}
+  \caption{Seção 1 — Identificação da área.}
+  \label{fig:s1}
+\end{figure}
+
+\subsection{S2 — Mapa de Hotspots}
+Visualização espacial integrada: heatmap de ocorrências sobreposto ao
+polígono da área FM, com camadas de câmeras, fatores urbanos e segmentos
+críticos coloridos por escore. Cada elemento tem legenda e popup.
+
+\begin{figure}[H]
+  \centering
+  \figfile{05_secao_s2_mapa.png}{0.95\linewidth}
+  \caption{Seção 2 — Mapa de hotspots.}
+  \label{fig:s2}
+\end{figure}
+
+\subsection{S3 — Resumo Executivo}
+Respostas geradas pela IA para as quatro perguntas operacionais do
+CompStat: \emph{onde} patrulhar, \emph{quando} patrulhar, \emph{como}
+empregar a FM e \emph{como} os órgãos devem resolver os fatores urbanos.
+Cada resposta vem com \emph{provenance} (origem dos dados e nível de
+confiança).
+
+\begin{figure}[H]
+  \centering
+  \figfile{06_secao_s3_resumo.png}{0.95\linewidth}
+  \caption{Seção 3 — Resumo executivo com proveniência.}
+  \label{fig:s3}
+\end{figure}
+
+\subsection{S4 — Ocorrências no Período}
+\label{ssec:s4}
+Indicadores quantitativos de ocorrências de roubo registradas na área.
+O período de cobertura está explícito no topo da seção: \textbf{janela
+do piloto de jan/2023 a dez/2024}. Como não há período anterior
+comparável nos dados disponíveis, a métrica de \emph{variação vs.\
+período anterior} não é exibida (omissão honesta em vez de cálculo
+inventado).
+
+\begin{figure}[H]
+  \centering
+  \figfile{07_secao_s4_ocorrencias.png}{0.95\linewidth}
+  \caption{Seção 4 — Indicadores de ocorrências e período do piloto.}
+  \label{fig:s4}
+\end{figure}
+
+\subsection{S5 — Análise Temporal}
+Mapa de calor 7$\times$24 (dia da semana $\times$ hora) que mostra os
+picos de incidência na área. Acompanha uma síntese textual gerada pela
+IA, com proveniência.
+
+\begin{figure}[H]
+  \centering
+  \figfile{08_secao_s5_temporal.png}{0.95\linewidth}
+  \caption{Seção 5 — Mapa de calor temporal.}
+  \label{fig:s5}
+\end{figure}
+
+\subsection{S6 — Dinâmica Criminal}
+Síntese qualitativa do modus operandi, rotas de fuga e padrões
+observados, extraída do texto livre de RELINTs e Disque Denúncia. Cada
+afirmação cita a fonte literal e o nível de confiança --- \emph{texto
+livre é tratado como indício, não como fato}.
+
+\begin{figure}[H]
+  \centering
+  \figfile{09_secao_s6_dinamica.png}{0.95\linewidth}
+  \caption{Seção 6 — Dinâmica criminal com proveniência.}
+  \label{fig:s6}
+\end{figure}
+
+\subsection{S7 — Emprego do Efetivo da FM}
+\label{ssec:s7}
+Sugestão de cobertura, horário e modalidade (a pé, viatura, moto) para a
+Força Municipal. A sugestão é uma \textbf{recomendação da IA construída
+a partir de dois insumos}: (i) o \emph{pico temporal} (dia e hora de
+maior incidência) e (ii) o \emph{deslocamento do autor} --- um indício
+extraído de RELINT e Disque Denúncia, tratado como inteligência, não
+como fato. A sugestão \emph{não usa} o escore de prioridade da S10. A
+decisão final é sempre do gestor.
+
+\begin{figure}[H]
+  \centering
+  \figfile{10_secao_s7_efetivo.png}{0.95\linewidth}
+  \caption{Seção 7 — Sugestão de emprego do efetivo, com explicação dos
+  insumos usados pela IA.}
+  \label{fig:s7}
+\end{figure}
+
+\subsection{S8 — Fatores Urbanos}
+Inventário dos fatores ambientais mapeados na área (iluminação,
+vegetação, calçada, lixo, mobiliário, situação de rua, trânsito),
+agregados por tipo e órgão responsável \cite{ObrienSampson2015,
+Wheeler2018}.
+
+\begin{figure}[H]
+  \centering
+  \figfile{11_secao_s8_fatores.png}{0.95\linewidth}
+  \caption{Seção 8 — Fatores urbanos por tipo e órgão.}
+  \label{fig:s8}
+\end{figure}
+
+\subsection{S9 — Câmeras}
+Cobertura de câmeras CIVITAS/COR na área, com identificação visual de
+pontos cegos.
+
+\begin{figure}[H]
+  \centering
+  \figfile{12_secao_s9_cameras.png}{0.95\linewidth}
+  \caption{Seção 9 — Cobertura de câmeras.}
+  \label{fig:s9}
+\end{figure}
+
+\subsection{S10 — Coincidências de Alto Risco e Plano de Ação}
+\label{ssec:s10}
+Esta é a seção onde o cruzamento das três camadas se materializa em
+prioridade. Para cada segmento crítico, é calculado um \emph{escore}
+$\in [0, 10]$:
+
+\begin{equation}
+\label{eq:score}
+\text{score} = \min\!\Bigl(10\,;\;
+  5\cdot \text{densidade}_{\text{norm}}
+  + 2\cdot \mathbb{1}[\text{tem fator}]
+  + 1{,}5\cdot \mathbb{1}[\text{tem dinâmica}]
+  + 1{,}5\cdot \mathbb{1}[\text{lacuna câmera}]
+\Bigr)
+\end{equation}
+
+\noindent\textbf{Lendo cada termo em linguagem simples:}
+\begin{itemize}
+  \item $\text{densidade}_{\text{norm}}$ é a densidade de ocorrências do
+        trecho dividida pela densidade máxima da área (varia de 0 a 1).
+        Peso~5: é o sinal mais forte porque é a evidência mais direta de
+        que algo está acontecendo.
+  \item $\mathbb{1}[\text{tem fator}]$ vale 1 se há fator urbano mapeado
+        no raio do trecho, 0 caso contrário. Peso~2: a presença de uma
+        causa removível eleva a prioridade.
+  \item $\mathbb{1}[\text{tem dinâmica}]$ vale 1 se há indício
+        qualitativo (RELINT ou Disque) sobre a área. Peso~1{,}5: texto
+        livre é indício, peso menor reflete a incerteza.
+  \item $\mathbb{1}[\text{lacuna câmera}]$ vale 1 se não há câmera no
+        raio. Peso~1{,}5: lacuna de cobertura agrava o segmento.
+\end{itemize}
+
+\noindent Os \textbf{pesos são uma escolha do produto} (não foram
+estimados por nenhum modelo) e estão extraídos em constantes nomeadas no
+código (\texttt{app/backend/match/score.py}). A fórmula é exibida na
+própria tela, no painel da seção S10, para que o gestor não trabalhe com
+caixa-preta.
+
+\begin{figure}[H]
+  \centering
+  \figfile{13_secao_s10_coincidencias.png}{0.95\linewidth}
+  \caption{Seção 10 — Coincidências de alto risco. A nota acima do
+  painel mostra a fórmula do escore com os pesos atuais.}
+  \label{fig:s10}
+\end{figure}
+
+% =============================================================================
+\section{Mapa Preditivo}
+\label{sec:preditivo}
+
+\subsection{O que é e como ler}
+\label{ssec:pred_overview}
+
+O Mapa Preditivo é a frente \emph{econométrica} da plataforma. Em vez de
+um escore aditivo desenhado à mão, aqui um \textbf{modelo de regressão
+logística} estima a probabilidade $\Pr(y_{i,t+s}=1)$ de \emph{haver pelo
+menos um roubo} em um micropolígono $i$ na semana $t{+}s$, com
+$s \in \{1, 2, 4\}$ semanas à frente.
+
+A unidade espacial é o \textbf{hexágono H3 de resolução 9}
+(aproximadamente 0{,}1 km$^2$) dentro do polígono da FM; a unidade
+temporal é a \emph{semana ISO}. O método dialoga com a literatura de
+\emph{near-repeat victimization} \cite{JohnsonBowers2004,
+MohlerEtAl2011} e \emph{risk terrain modeling} \cite{CaplanKennedyMiller2011}.
+
+\begin{figure}[H]
+  \centering
+  \figfile{14_mapa_preditivo_geral.png}{0.95\linewidth}
+  \caption{Mapa Preditivo --- visão geral, com seletor de área e painel
+  analítico em três abas (Drivers, Métricas, Coeficientes).}
+  \label{fig:pred_overview}
+\end{figure}
+
+\subsection{Especificação econométrica}
+\label{ssec:pred_spec}
+
+O modelo é um logit em painel hex-semana, com efeitos fixos de área FM:
+
+\begin{equation}
+\label{eq:logit}
+\Pr\!\left(y_{i,t+s}=1 \mid X_{i,t}\right)
+  \;=\; \Lambda\!\left( \alpha_{a(i)} + X_{i,t}\,\beta_{s} \right),
+  \qquad s \in \{1, 2, 4\}
+\end{equation}
+
+\noindent onde
+\begin{itemize}
+  \item $i$ é o hexágono H3 res 9, $t$ a semana, $a(i)$ a área FM do
+        hexágono, $\alpha_{a(i)}$ o efeito fixo de área;
+  \item $\Lambda(z) = e^{z}/(1+e^{z})$ é a função logística;
+  \item $X_{i,t}$ é o vetor de regressores observados em $t$, e
+        $\beta_s$ é o vetor de coeficientes estimado separadamente
+        para cada horizonte $s$.
+\end{itemize}
+
+\noindent O estimador é um logit com regularização $L_2$
+($C{=}1{,}0$, solver \texttt{liblinear}) e
+\texttt{class\_weight='balanced'} para mitigar desbalanceamento de
+classes (eventos raros). O split é \emph{temporal}: treino até
+$T{-}4$, validação $T{-}3$ a $T{-}1$, teste em $T$ --- jamais
+amostragem aleatória, dado o painel.
+
+\paragraph{Grupos de regressores em $X_{i,t}$.} Extraídos da Fase 3 do
+notebook:
+\begin{enumerate}
+  \item \textbf{Defasagens próprias do crime no hexágono} ---
+        \texttt{y\_lag1}, \texttt{y\_lag2}, \texttt{y\_lag4},
+        \texttt{y\_lag12} e a soma móvel \texttt{n\_crimes\_12w}.
+        Capturam o mecanismo de \emph{near-repeat}.
+  \item \textbf{Lag espacial} --- \texttt{W\_y\_lag1}, crime na
+        vizinhança ring-1 do hexágono em $t{-}1$ \cite{JohnsonBowers2004}.
+  \item \textbf{Sazonalidade harmônica} --- \texttt{week\_sin},
+        \texttt{week\_cos} (ciclo anual) e \texttt{is\_holiday\_week}
+        (semanas de feriado nacional/municipal).
+  \item \textbf{Fatores urbanos} --- sete componentes
+        (\texttt{n\_fat\_calcada}, \texttt{n\_fat\_ilum},
+        \texttt{n\_fat\_lixo}, \texttt{n\_fat\_mobil},
+        \texttt{n\_fat\_sitrua}, \texttt{n\_fat\_transito},
+        \texttt{n\_fat\_vegetac}). Justifica-se manter cada componente
+        em vez do total porque eles mapeiam diretamente nos órgãos
+        responsáveis \cite{ObrienSampson2015, ChalfinEtAl2019}.
+  \item \textbf{Cobertura por câmeras} --- \texttt{n\_cameras}
+        (hex) e \texttt{n\_cameras\_ring1} (vizinhança).
+  \item \textbf{Sinal qualitativo do Disque} ---
+        \texttt{n\_dd\_lag1}, contagem de denúncias na semana anterior
+        \cite{Wheeler2018}.
+  \item \textbf{Contexto territorial ORCRIM} ---
+        \texttt{orcrim\_CV}, \texttt{orcrim\_Mil\'icia},
+        \texttt{orcrim\_TCP}, com a categoria
+        \emph{``Sem domínio''} omitida como referência (ver caveat
+        abaixo).
+  \item \textbf{Efeitos fixos de área FM} ---
+        \texttt{fe\_area\_*}, com uma área omitida como referência.
+\end{enumerate}
+
+\subsection{Como interpretar o modelo}
+\label{ssec:pred_interpret}
+
+A escolha de um logit linear nos regressores não é casual. Modelos mais
+flexíveis (redes neurais, gradient boosting, random forest) podem
+oferecer ganhos marginais de precisão, mas \emph{ao custo de uma caixa
+preta}: o gestor recebe uma probabilidade prevista sem conseguir
+explicar de onde ela veio. Aqui, a leitura é direta --- cada coeficiente
+$\beta_k$ tem um significado próprio, em uma fórmula que cabe numa
+linha. É essa transparência que sustenta o uso responsável da
+ferramenta na decisão pública.
+
+\paragraph{O que cada coeficiente significa.} No logit, o coeficiente
+$\beta_k$ é o efeito de um aumento unitário no regressor $x_k$ sobre o
+\emph{log-odds} de o crime ocorrer. Equivalentemente, $\exp(\beta_k)$ é
+o \emph{odds ratio} --- o fator que multiplica a razão de chances de
+$y{=}1$ contra $y{=}0$ quando $x_k$ aumenta em uma unidade, mantendo
+todo o resto constante. Em linguagem natural:
+
+\begin{itemize}
+  \item $\exp(\beta_k) > 1$: a variável \emph{aumenta} a chance de crime.
+  \item $\exp(\beta_k) < 1$: a variável \emph{reduz} a chance de crime.
+  \item $\exp(\beta_k) \approx 1$: efeito praticamente neutro.
+\end{itemize}
+
+\paragraph{Exemplo isolado.} O coeficiente estimado para
+\texttt{y\_lag1} (houve crime no mesmo hex na semana anterior) é
+$\beta = +0{,}2346$. O odds ratio é $\exp(0{,}2346) \approx 1{,}26$.
+\textbf{Leitura para o gestor:} um hex que teve crime na semana
+passada enfrenta \emph{cerca de $26\%$ a mais de chance} de ter crime
+na próxima, comparado a um hex idêntico em todo o resto que não teve.
+Isto é a evidência quantitativa do mecanismo de \emph{near-repeat}
+\cite{JohnsonBowers2004, MohlerEtAl2011} que a literatura já documenta.
+
+\paragraph{Exemplo combinado: somando alavancas no log-odds.} Como o
+preditor linear é uma soma, basta somar os $\beta$'s relevantes para
+compor um cenário. Considere dois hexes hipotéticos, $A$ e $B$, na
+mesma área FM (mesmo $\alpha$), na mesma semana (mesma sazonalidade).
+A diferença está só nas variáveis abaixo:
+
+\begin{table}[H]
+  \centering
+  \small
+  \caption{Cenário ilustrativo: hex $A$ ``limpo'' versus hex $B$ com
+  três alavancas adversas. Coeficientes $\beta$ extraídos da rodada
+  atual de \texttt{coeficientes\_logit.csv} ($s{=}1$).}
+  \label{tab:exemplo_interpret}
+  \begin{tabular}{lrrrr}
+    \toprule
+    Variável & $\beta$ & $x_A$ & $x_B$ & Contribuição em $B$ \\
+    \midrule
+    \texttt{y\_lag1} (crime semana anterior)      & $+0{,}235$ & 0 & 1 & $+0{,}235$ \\
+    \texttt{W\_y\_lag1} (crime vizinhança)        & $+0{,}366$ & 0 & 1 & $+0{,}366$ \\
+    \texttt{n\_fat\_transito} (× 2 pontos)        & $+0{,}090$ & 0 & 2 & $+0{,}179$ \\
+    \texttt{n\_fat\_calcada}                       & $+0{,}054$ & 0 & 1 & $+0{,}054$ \\
+    \midrule
+    \textbf{Diferença no log-odds ($B - A$)}      &            &   &   & $\mathbf{+0{,}834}$ \\
+    \textbf{Odds ratio} $\exp(+0{,}834)$           &            &   &   & $\mathbf{\approx 2{,}30}$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\noindent\textbf{Tradução em risco absoluto.} Suponha que $A$ tem uma
+probabilidade base $P(A) = 10\%$ de crime na próxima semana (próximo da
+taxa observada no painel). Suas chances de crime são
+$\text{odds}(A) = 0{,}10/0{,}90 \approx 0{,}111$. Para $B$, multiplicamos
+pelo odds ratio: $\text{odds}(B) \approx 0{,}111 \times 2{,}30 \approx
+0{,}255$. Convertendo de volta para probabilidade:
+$P(B) = 0{,}255/(1+0{,}255) \approx 20\%$. \emph{Ou seja, $B$ tem cerca
+do dobro da probabilidade absoluta de $A$, mesmo na mesma área e
+semana.}
+
+\paragraph{Como ler coeficientes negativos.} O coeficiente de
+\texttt{orcrim\_CV} é $\beta = -1{,}90$, $\exp(-1{,}90) \approx
+0{,}15$. \textbf{Leitura:} hexágonos em território de domínio CV têm,
+em média no painel, cerca de $85\%$ \emph{menos} chance de roubo
+registrado em comparação a hexes em ``Sem domínio'', controlando por
+todo o resto. Isto \emph{não significa} que o CV reduz crime: é uma
+correlação observada, possivelmente por subnotificação ou por efeito
+inibidor sobre crime patrimonial em territórios sob controle de
+facções. A leitura correta é \emph{``estar em CV está associado a
+menos registros''}, nunca \emph{``CV causa menos crime''}.
+
+\paragraph{Coeficientes desprezíveis também informam.} O coeficiente
+de \texttt{n\_cameras} é $\beta = -0{,}003$, $\exp(-0{,}003) \approx
+0{,}997$. \textbf{Leitura:} uma câmera adicional no hex está associada
+a uma redução de cerca de $0{,}3\%$ nas chances --- praticamente
+nada. Isto não invalida câmeras como política pública (elas geram
+vídeo para investigação \emph{ex post}), mas mostra que, no painel
+observado, sua presença não diferencia hexes de alto e baixo risco
+\emph{ex ante}. O painel de variáveis acionáveis
+(seção~\ref{ssec:acionaveis}) já sinaliza esta variável na categoria
+\emph{Desprezível}.
+
+\paragraph{Resumo prático para o gestor.}
+\begin{enumerate}
+  \item \emph{Sinal} do $\beta$: positivo aumenta risco; negativo reduz.
+  \item \emph{Magnitude} de $\exp(\beta)$: distância de $1$ indica força.
+        Acima de $1{,}5$ é forte; entre $1{,}05$ e $1{,}5$ é moderado;
+        próximo de $1{,}00$ é desprezível.
+  \item \emph{Efeitos se somam no log-odds e se multiplicam nas odds.}
+        Combinações de fatores adversos podem dobrar ou triplicar a
+        probabilidade rapidamente.
+  \item \emph{Correlação, não causalidade.} Coeficientes orientam
+        \emph{prioridade}, não garantem que intervir naquela variável
+        reduzirá crime na mesma proporção.
+\end{enumerate}
+
+\subsection{Métricas de validação}
+\label{ssec:pred_metrics}
+
+O modelo é avaliado em quatro métricas, computadas sobre o conjunto de
+teste para cada horizonte de previsão:
+
+\begin{itemize}
+  \item \textbf{AUC-ROC} --- discriminação ordinal entre hexes que
+        terão e que não terão crime na semana $t{+}s$.
+  \item \textbf{AUC-PR} --- precisão-recall, mais sensível ao
+        desbalanceamento de classes (eventos raros).
+  \item \textbf{PAI top10 (Prediction Accuracy Index)} ---
+        razão entre a fração de eventos capturada nos 10\% de hexes de
+        maior risco previsto e a fração de área coberta por esses 10\%- \textbf{É a principal métrica para policy, na opinião dos autores, porque reflete a eficiência da alocação de recursos: quanto mais eventos capturados em menos área, melhor.}
+        Métrica padrão na literatura de \emph{predictive policing}
+        \cite{ChaineyEtAl2008}.
+  \item \textbf{Moran's I dos resíduos} --- autocorrelação espacial
+        residual; valores próximos de zero indicam que o modelo
+        capturou a estrutura espacial do crime.
+\end{itemize}
+
+\noindent Resultados atuais (extraídos de
+\texttt{metricas\_validacao.csv}):
+
+\begin{table}[H]
+  \centering
+  \caption{Métricas de validação por horizonte de previsão. Conjunto de
+  teste com 156 observações em todos os horizontes; conjunto de treino
+  com 38{.}220 observações.}
+  \label{tab:metrics}
+  \begin{tabular}{lrrrr}
+    \toprule
+    Horizonte & AUC-ROC & AUC-PR & PAI top10 & Moran's I ($p$) \\
+    \midrule
+    $s{=}1$ (1 sem.)  & 0{,}7275 & 0{,}3713 & 3{,}5294 & 0{,}1350 ($p{=}0{,}014$) \\
+    $s{=}2$ (2 sem.)  & 0{,}7529 & 0{,}3871 & 3{,}5294 & 0{,}1167 ($p{=}0{,}017$) \\
+    $s{=}4$ (4 sem.)  & 0{,}7088 & 0{,}3759 & 3{,}5294 & 0{,}1434 ($p{=}0{,}005$) \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{figure}[H]
+  \centering
+  \figfile{17_metricas_tab.png}{0.7\linewidth}
+  \caption{Aba ``Métricas'' do Mapa Preditivo.}
+  \label{fig:metricas}
+\end{figure}
+
+\subsection{Drivers por área}
+\label{ssec:drivers}
+
+A aba \emph{Drivers} mostra, para cada área FM, os cinco hexágonos com
+maior probabilidade prevista e os três fatores que mais contribuem para
+o risco previsto em cada um (top contribuintes $|\beta \cdot x|$).
+
+\paragraph{Cuidado de leitura.} O \emph{rank} ordena os hexágonos
+\emph{dentro de cada área FM}, não no município inteiro. Isto garante
+que todas as áreas apareçam representadas; em contrapartida, P(crime)
+entre áreas diferentes não é diretamente comparável --- um \emph{rank
+1} em uma área pode ter risco absoluto menor que um \emph{rank 5} em
+outra. A própria tela exibe esta nota acima da tabela.
+
+\begin{figure}[H]
+  \centering
+  \figfile{16_drivers_tab.png}{0.95\linewidth}
+  \caption{Aba ``Drivers'' --- top hexes por área e seus contribuintes.}
+  \label{fig:drivers}
+\end{figure}
+
+\subsection{Painel de variáveis acionáveis}
+\label{ssec:acionaveis}
+
+Esta é a \textbf{contribuição central} do painel preditivo para o
+gestor. Os regressores do modelo se dividem em duas naturezas:
+\begin{itemize}
+  \item \textbf{Variáveis estruturais} --- defasagens do próprio
+        crime, lag espacial, efeitos fixos de área, sazonalidade,
+        domínio de facção. São úteis para \emph{prever crime}, mas
+        \textbf{não orientam intervenção} (o gestor não pode reduzir
+        a sazonalidade nem o passado).
+  \item \textbf{Alavancas de política pública} --- fatores urbanos
+        desagregados, câmeras, denúncias do Disque. \emph{O município
+        pode agir sobre estas.}
+\end{itemize}
+
+\noindent O painel filtra os coeficientes para mostrar
+\emph{somente} as alavancas, com:
+direção do efeito ($\uparrow$ aumenta risco / $\downarrow$ reduz /
+$\approx$ neutro),
+\emph{magnitude qualitativa} pelo valor absoluto de $\beta$
+(\emph{Notável} $|\beta| > 0{,}05$; \emph{Leve}
+$0{,}01 \le |\beta| \le 0{,}05$; \emph{Desprezível}
+$|\beta| < 0{,}01$),
+órgãos responsáveis e uma nota curta.
+
+\paragraph{Caveat causal.} Os coeficientes vêm de um modelo
+\emph{preditivo}, não de um experimento causal: a correlação observada
+justifica priorização, não causalidade. Para câmeras, há ainda
+\emph{viés de seleção} (instalação endógena onde já há crime, o que
+gera correlação positiva com risco mesmo quando o efeito causal pode
+ser nulo ou negativo) \cite{LumIsaac2016, EnsignEtAl2018}.
+
+\begin{figure}[H]
+  \centering
+  \figfile{19_painel_alavancas.png}{0.95\linewidth}
+  \caption{Painel de variáveis acionáveis. As alavancas estão
+  ordenadas por $|\beta_{s=1}|$ decrescente.}
+  \label{fig:alavancas}
+\end{figure}
+
+\subsection{Mapa interativo e popups por hexágono}
+\label{ssec:mapa_interativo}
+
+O mapa interativo serve as predições T+1 por padrão, com toggles para
+T+2 e T+4 e overlay dos polígonos FM. Cada hexágono, ao ser clicado,
+abre um popup com:
+área(s) FM, horizonte, P(crime), decil de risco e os três fatores que
+mais explicam aquele risco.
+
+\begin{figure}[H]
+  \centering
+  \figfile{14_mapa_preditivo_geral.png}{0.95\linewidth}
+  \caption{Mapa interativo --- horizonte T+1.}
+  \label{fig:mapa_t1}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \figfile{15_mapa_preditivo_area_PV.png}{0.95\linewidth}
+  \caption{Mapa preditivo filtrado por área (Presidente Vargas ---
+  Campo de Santana --- Central do Brasil --- Cinelândia), mostrando o
+  recorte de hexágonos dentro do polígono da Força Municipal.}
+  \label{fig:mapa_polig}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \figfile{20_popup_hex.png}{0.7\linewidth}
+  \caption{Popup detalhado de um hexágono, com os três principais
+  drivers.}
+  \label{fig:popup}
+\end{figure}
+
+\subsection{Coeficientes em português}
+\label{ssec:coef}
+
+A aba \emph{Coeficientes} mostra todos os regressores estimados com
+seus \emph{odds ratios} por horizonte ($\exp(\beta)$). Para reduzir
+fricção de leitura, os nomes técnicos das variáveis são traduzidos
+para rótulos em português natural (p.\ ex.\ \texttt{y\_lag1}
+$\to$ ``Crime no mesmo trecho (1 semana antes)'';
+\texttt{n\_fat\_ilum} $\to$ ``Fator urbano: iluminação''). O nome
+técnico continua sendo a chave canônica nos CSVs.
+
+\begin{figure}[H]
+  \centering
+  \figfile{18_coeficientes_tab.png}{0.95\linewidth}
+  \caption{Aba ``Coeficientes'' com rótulos em português.}
+  \label{fig:coef}
+\end{figure}
+
+% =============================================================================
+\section{Guardrails de IA responsável}
+\label{sec:guardrails}
+
+Este é um projeto de segurança pública. As regras abaixo são
+\emph{inegociáveis} e aparecem em todas as superfícies da aplicação.
+
+\begin{enumerate}
+  \item \textbf{Decisão final sempre humana.} A plataforma produz
+        \emph{rascunhos} auditáveis (relatório, sugestões, escores). O
+        Relatório exportado em DOCX vem marcado com banner
+        \emph{``RASCUNHO --- validação humana''}.
+  \item \textbf{Foco no ambiente, não no indivíduo.} A plataforma
+        analisa fatores urbanos e alocação de patrulha, não vigia
+        pessoas \cite{CohenFelson1979, ObrienSampson2015}.
+  \item \textbf{Texto livre é indício, não fato.} Disque Denúncia e
+        RELINTs sempre vêm com citação literal, fonte rastreável e
+        nível de confiança. A IA sinaliza incerteza em vez de afirmar.
+  \item \textbf{Nunca inventar dado.} Camada ausente é declarada como
+        ausente. Escore com dado insuficiente é marcado como
+        \emph{baixa confiança}.
+  \item \textbf{Cuidado com o viés de realimentação.} Priorizar sempre
+        as mesmas áreas gera mais patrulha, mais registro e escore
+        artificialmente mais alto na próxima iteração. A literatura
+        documenta este risco em modelos preditivos de policiamento
+        \cite{LumIsaac2016, EnsignEtAl2018}; a plataforma deve ser
+        usada com revisão humana periódica.
+  \item \textbf{LGPD.} Dados são tratados como agregados
+        territoriais. Dados pessoais (Disque, CPSR) são minimizados.
+        O copiloto não tem acesso a SQL livre --- apenas a uma
+        \emph{whitelist} de consultas.
+  \item \textbf{Transparência da fórmula.} O escore da S10 é uma soma
+        ponderada com pesos extraídos em constantes nomeadas; a fórmula
+        é exibida na própria tela. Não há caixa-preta.
+\end{enumerate}
+
+% =============================================================================
+\begin{thebibliography}{99}
+
+\bibitem{ChaineyEtAl2008}
+Chainey, S., Tompson, L., \& Uhlig, S. (2008).
+The Utility of Hotspot Mapping for Predicting Spatial Patterns of Crime.
+\emph{Security Journal}, 21(1--2), 4--28.
+
+\bibitem{MohlerEtAl2011}
+Mohler, G.~O., Short, M.~B., Brantingham, P.~J., Schoenberg, F.~P.,
+\& Tita, G.~E. (2011).
+Self-Exciting Point Process Modeling of Crime.
+\emph{Journal of the American Statistical Association}, 106(493), 100--108.
+
+\bibitem{MohlerEtAl2015}
+Mohler, G.~O., Short, M.~B., Malinowski, S., Johnson, M., Tita, G.~E.,
+Bertozzi, A.~L., \& Brantingham, P.~J. (2015).
+Randomized Controlled Field Trials of Predictive Policing.
+\emph{Journal of the American Statistical Association}, 110(512), 1399--1411.
+
+\bibitem{JohnsonBowers2004}
+Johnson, S.~D., \& Bowers, K.~J. (2004).
+The Burglary as Clue to the Future: The Beginnings of Prospective
+Hot-Spotting. \emph{European Journal of Criminology}, 1(2), 237--255.
+
+\bibitem{CohenFelson1979}
+Cohen, L.~E., \& Felson, M. (1979).
+Social Change and Crime Rate Trends: A Routine Activity Approach.
+\emph{American Sociological Review}, 44(4), 588--608.
+
+\bibitem{Wheeler2018}
+Wheeler, A.~P. (2018).
+The Effect of 311 Calls for Service on Crime in Washington, DC, at
+Microplaces. \emph{Crime \& Delinquency}, 64(14), 1882--1903.
+
+\bibitem{ObrienSampson2015}
+O'Brien, D.~T., \& Sampson, R.~J. (2015).
+Public and Private Spheres of Neighborhood Disorder: Assessing
+Pathways to Violence Using Large-Scale Digital Records.
+\emph{Journal of Research in Crime and Delinquency}, 52(4), 486--510.
+
+\bibitem{CaplanKennedyMiller2011}
+Caplan, J.~M., Kennedy, L.~W., \& Miller, J. (2011).
+Risk Terrain Modeling: Brokering Criminological Theory and GIS Methods
+for Crime Forecasting. \emph{Justice Quarterly}, 28(2), 360--381.
+
+\bibitem{ChalfinEtAl2019}
+Chalfin, A., Hansen, B., Lerner, J., \& Parker, L. (2019).
+Reducing Crime through Environmental Design: Evidence from a
+Randomized Experiment of Street Lighting in New York City.
+\emph{NBER Working Paper} No.\ 25798.
+
+\bibitem{LumIsaac2016}
+Lum, K., \& Isaac, W. (2016).
+To Predict and Serve? \emph{Significance}, 13(5), 14--19.
+
+\bibitem{EnsignEtAl2018}
+Ensign, D., Friedler, S.~A., Neville, S., Scheidegger, C.,
+\& Venkatasubramanian, S. (2018).
+Runaway Feedback Loops in Predictive Policing.
+\emph{Proceedings of Machine Learning Research (FAT*)}, 81, 160--171.
+
+\end{thebibliography}
+
+\end{document}

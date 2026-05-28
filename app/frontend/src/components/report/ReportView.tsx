@@ -77,7 +77,7 @@ export function ReportView() {
         <S1Identificacao index={1} data={report.identificacao} />
         <S2Mapa index={2} />
         <S3ResumoExecutivo index={3} perguntas={report.resumoExecutivo} />
-        <S4Ocorrencias index={4} data={report.ocorrencias} />
+        <S4Ocorrencias index={4} data={report.ocorrencias} periodo={report.periodo} />
         <S5Temporal index={5} resumo={report.temporalResumo} />
         <S6DinamicaCriminal index={6} block={report.dinamicaCriminal} />
         <S7EfetivoFM index={7} rows={report.efetivoFM} />

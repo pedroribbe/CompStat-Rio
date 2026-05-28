@@ -1,6 +1,7 @@
 // Barra de topo fixa: identidade, seletor de área, exportação e toggle do copiloto.
 import { AreaSelector } from './AreaSelector'
 import { ExportButtons } from './ExportButtons'
+import { ViewTabs } from './ViewTabs'
 
 export function TopBar({
   copilotOpen,
@@ -33,14 +34,13 @@ export function TopBar({
         </div>
       </button>
 
+      <ViewTabs view="home" onOpenHome={onGoHome} onOpenPredictive={onOpenPredictive} />
+
       <div className="topbar__center">
         <AreaSelector />
       </div>
 
       <div className="topbar__actions">
-        <button type="button" className="btn btn--sm" onClick={onOpenPredictive}>
-          Mapa Preditivo
-        </button>
         <ExportButtons />
         <span className="topbar__sep" aria-hidden="true" />
         <button

@@ -1,12 +1,30 @@
 // Seção 4 — Ocorrências. Indicadores do período + distribuição por tipo.
-import type { Ocorrencias } from '../../../api/types'
+import type { Ocorrencias, Periodo } from '../../../api/types'
 import { ProvenanceCard } from '../ProvenanceCard'
 import { SectionCard } from '../SectionCard'
 
-export function S4Ocorrencias({ data, index }: { data: Ocorrencias; index: number }) {
+const MESES_PT = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
+
+// Converte "2023-01" -> "jan/2023"; se vier em outro formato, devolve cru.
+function formatarMesAno(ymd: string): string {
+  const [ano, mes] = ymd.split('-')
+  const idx = Number(mes) - 1
+  if (!ano || Number.isNaN(idx) || idx < 0 || idx > 11) return ymd
+  return `${MESES_PT[idx]}/${ano}`
+}
+
+export function S4Ocorrencias({
+  data,
+  index,
+  periodo,
+}: {
+  data: Ocorrencias
+  index: number
+  periodo: Periodo
+}) {
   const { indicadores: ind, distribuicao } = data
   const maxQtd = Math.max(...distribuicao.map((d) => d.qtd), 1)
-  const variacao = ind.variacaoPct
+  const periodoLegivel = `${formatarMesAno(periodo.de)} a ${formatarMesAno(periodo.ate)}`
 
   return (
     <SectionCard
@@ -15,6 +33,12 @@ export function S4Ocorrencias({ data, index }: { data: Ocorrencias; index: numbe
       title="Ocorrências no período"
       subtitle="Furto e roubo registrados na área"
     >
+      <div className="temporal-callouts">
+        <span className="chip chip--neutral">
+          Período: {periodoLegivel} (janela do piloto)
+        </span>
+      </div>
+
       <div className="stat-strip">
         <div className="stat stat--accent">
           <span className="stat__value tnum">{ind.total.toLocaleString('pt-BR')}</span>
@@ -34,28 +58,6 @@ export function S4Ocorrencias({ data, index }: { data: Ocorrencias; index: numbe
           <span className="stat__value tnum">{ind.rankingEntreAreas}º</span>
           <span className="stat__label">Ranking entre áreas</span>
         </div>
-        {typeof variacao === 'number' && (
-          <div className="stat">
-            <span className={`stat__value stat__trend tnum ${variacao > 0 ? 'stat__value--up' : 'stat__value--down'}`}>
-              <svg className="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-                {variacao > 0 ? (
-                  <>
-                    <path d="M7 17 17 7" />
-                    <path d="M8 7h9v9" />
-                  </>
-                ) : (
-                  <>
-                    <path d="M7 7l10 10" />
-                    <path d="M17 8v9H8" />
-                  </>
-                )}
-              </svg>
-              {variacao > 0 ? '+' : ''}
-              {variacao.toLocaleString('pt-BR', { maximumFractionDigits: 1 })}%
-            </span>
-            <span className="stat__label">Variação vs. período anterior</span>
-          </div>
-        )}
       </div>
 
       <div className="distro">

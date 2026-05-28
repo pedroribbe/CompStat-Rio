@@ -7,7 +7,10 @@
 .pred-page {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  /* min-height (em vez de height fixa) permite que blocos abaixo do mapa
+     — como o painel de Alavancas — empurrem o conteúdo e provoquem scroll
+     natural da página. */
+  min-height: 100vh;
   background: var(--surface-app);
   color: var(--text-body);
 }
@@ -15,7 +18,8 @@
 /* ------------------------------------------------------------- Cabeçalho */
 .pred-header {
   flex: none;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: var(--sp-4);
   height: var(--topbar-h);
@@ -23,6 +27,8 @@
   background: var(--surface-rail);
   border-bottom: 1px solid var(--border);
 }
+.pred-header__title { justify-self: start; min-width: 0; }
+.pred-header__right { justify-self: end; }
 .pred-header__title {
   display: flex;
   flex-direction: column;
@@ -37,15 +43,32 @@
   font-size: var(--fs-xs);
   color: var(--text-muted);
 }
+.pred-header__center {
+  justify-self: center;
+}
 
 /* ---------------------------------------------------------------- Layout */
 .pred-layout {
-  flex: 1 1 auto;
-  min-height: 0;
+  /* Altura fixa para deixar espaço, abaixo do layout, para outros blocos
+     (ex.: painel de Alavancas). Antes era flex:1 1 auto e ocupava toda a
+     viewport — agora cabe num pedaço previsível. */
+  flex: 0 0 auto;
+  height: calc(100vh - var(--topbar-h) - var(--sp-5) * 2);
+  min-height: 520px;
   display: grid;
   grid-template-columns: minmax(0, 1.4fr) minmax(360px, 0.9fr);
   gap: var(--sp-5);
   padding: var(--sp-5);
+}
+
+/* Bloco que aparece ABAIXO do layout principal (ex.: painel de Alavancas
+   de política pública sob a aba "Drivers"). Ocupa a largura cheia da
+   página e faz parte do fluxo vertical (provoca scroll se necessário). */
+.pred-below {
+  flex: none;
+  padding: var(--sp-5);
+  background: var(--surface-app);
+  border-top: 1px solid var(--border);
 }
 
 /* ------------------------------------------------------- Coluna do mapa */
@@ -164,11 +187,41 @@
   padding: var(--sp-4);
 }
 
+/* Nota explicativa acima de tabelas/painéis do preditivo. Mesma linguagem
+   visual do .map-note usado em outras seções do relatório. */
+.pred-note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-2);
+  margin: 0 0 var(--sp-3) 0;
+  font-size: var(--fs-xs);
+  line-height: var(--lh-snug, 1.4);
+  color: var(--text-muted);
+  background: var(--surface-sunken);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: var(--sp-2) var(--sp-3);
+}
+.pred-note .icon {
+  width: 14px;
+  height: 14px;
+  margin-top: 2px;
+  color: var(--text-muted);
+  flex: none;
+}
+.pred-note strong {
+  color: var(--text-body);
+  font-weight: 600;
+}
+
 /* ---------------------------------------------------------------- Tabelas */
 .pred-table-wrap {
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  overflow: hidden;
+  /* rolagem horizontal quando a tabela é mais larga que o painel (sidebar
+     estreita em telas menores). overflow-y fica visível porque o scroll
+     vertical é feito pelo .pred-sidebar__body que envolve a tabela. */
+  overflow-x: auto;
 }
 .pred-table-wrap--scroll {
   max-height: 100%;
@@ -176,6 +229,9 @@
 }
 .pred-table {
   width: 100%;
+  /* largura mínima para não espremer as colunas de driver; abaixo disso
+     o wrapper passa a rolar lateralmente. */
+  min-width: 640px;
   border-collapse: collapse;
   font-size: var(--fs-sm);
 }
@@ -239,6 +295,7 @@
 .pred-driver {
   display: inline;
   color: var(--text-body);
+  white-space: nowrap;
 }
 .pred-driver__pct {
   margin-left: var(--sp-1);
@@ -352,4 +409,77 @@
   .pred-card__grid {
     grid-template-columns: 1fr 1fr;
   }
+}
+
+/* -------------------------------------------- Painel "Alavancas de política" */
+.pred-actionable {
+  /* sem margin-top: o espaçamento agora vem do .pred-below que envolve a section */
+}
+.pred-actionable__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-2);
+}
+.pred-actionable__title {
+  margin: 0;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--text-strong);
+  letter-spacing: 0.01em;
+}
+.pred-actionable__lead {
+  margin: 0 0 var(--sp-3) 0;
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  line-height: var(--lh-snug, 1.4);
+}
+.pred-actionable__nota {
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  max-width: 32ch;
+}
+.pred-actionable__footnote {
+  margin: var(--sp-2) 0 0 0;
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  line-height: var(--lh-snug, 1.4);
+}
+.pred-actionable__footnote strong {
+  color: var(--text-body);
+  font-weight: 600;
+}
+.pred-actionable__caveat {
+  margin: var(--sp-3) 0 0 0;
+  padding: var(--sp-2) var(--sp-3);
+  font-size: var(--fs-xs);
+  font-style: italic;
+  color: var(--text-muted);
+  background: var(--surface-sunken);
+  border-left: 3px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  line-height: var(--lh-snug, 1.4);
+}
+
+/* Selo de magnitude qualitativa do |β| na coluna "Magnitude". */
+.pred-mag {
+  display: inline-block;
+  padding: 0.1rem 0.5rem;
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.pred-mag--notavel {
+  background: var(--sev-high-soft);
+  color: var(--sev-high-text);
+}
+.pred-mag--leve {
+  background: var(--sev-med-soft);
+  color: var(--sev-med-text);
+}
+.pred-mag--desprezivel {
+  background: var(--sev-low-soft);
+  color: var(--sev-low-text);
 }

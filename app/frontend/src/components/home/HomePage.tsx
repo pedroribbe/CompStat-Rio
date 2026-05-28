@@ -3,6 +3,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { fetchAreasOverview } from '../../api/reports'
 import { AreaCard } from './AreaCard'
+import { ViewTabs } from '../layout/ViewTabs'
 
 export function HomePage({ onSelectArea, onOpenPredictive }: { onSelectArea: (id: number) => void; onOpenPredictive: () => void }) {
   const { data, isLoading } = useQuery({
@@ -16,19 +17,22 @@ export function HomePage({ onSelectArea, onOpenPredictive }: { onSelectArea: (id
   return (
     <div className="home">
       <header className="home__topbar">
-        <span className="home__mark" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <path d="M12 2 4 6v6c0 5 3.5 8 8 10 4.5-2 8-5 8-10V6z" />
-            <path d="M9 12l2 2 4-4" />
-          </svg>
-        </span>
-        <div className="home__brand">
-          <strong>CompStat Rio</strong>
-          <span className="home__brand-sub">Inteligência de Segurança Pública</span>
+        <div className="home__brand-wrap">
+          <span className="home__mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M12 2 4 6v6c0 5 3.5 8 8 10 4.5-2 8-5 8-10V6z" />
+              <path d="M9 12l2 2 4-4" />
+            </svg>
+          </span>
+          <div className="home__brand">
+            <strong>CompStat Rio</strong>
+            <span className="home__brand-sub">Inteligência de Segurança Pública</span>
+          </div>
         </div>
-        <button type="button" className="btn btn--primary" style={{ marginLeft: 'auto' }} onClick={onOpenPredictive}>
-          Mapa Preditivo de Risco
-        </button>
+        <div className="home__topbar-center">
+          <ViewTabs view="home" onOpenHome={() => {}} onOpenPredictive={onOpenPredictive} />
+        </div>
+        <div className="home__topbar-right" aria-hidden="true" />
       </header>
 
       <main className="home__body">
