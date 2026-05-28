@@ -18,6 +18,7 @@
 \usepackage{longtable}
 \usepackage{microtype}
 \usepackage{xcolor}
+\usepackage{float}  % habilita o especificador [H] para travar figuras na posição
 \usepackage[
   colorlinks=true,
   linkcolor=blue!50!black,
@@ -114,7 +115,7 @@ sobrepõe, no mesmo ponto do mapa, três camadas:
 substitui o gestor}. Os guardrails da plataforma são detalhados na
 seção~\ref{sec:guardrails}.
 
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
   \figfile{01_home_lista_areas.png}{0.95\linewidth}
   \caption{Página inicial do CompStat Rio: lista de áreas da Força
@@ -139,7 +140,7 @@ abas centralizado no topo:
         as próximas 1, 2 e 4 semanas (seção~\ref{sec:preditivo}).
 \end{itemize}
 
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
   \figfile{02_topbar_abas.png}{0.95\linewidth}
   \caption{Seletor de abas no topo. As duas visões têm igual destaque
@@ -162,7 +163,7 @@ Cabeçalho da área: nome, polígono oficial da FM, bairros principais,
 domínios territoriais de organizações criminosas identificados, AISP e
 contagem de trechos críticos detectados pelo motor de cruzamento.
 
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
   \figfile{04_secao_s1_identificacao.png}{0.95\linewidth}
   \caption{Seção 1 — Identificação da área.}
@@ -174,7 +175,7 @@ Visualização espacial integrada: heatmap de ocorrências sobreposto ao
 polígono da área FM, com camadas de câmeras, fatores urbanos e segmentos
 críticos coloridos por escore. Cada elemento tem legenda e popup.
 
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
   \figfile{05_secao_s2_mapa.png}{0.95\linewidth}
   \caption{Seção 2 — Mapa de hotspots.}
@@ -188,7 +189,7 @@ empregar a FM e \emph{como} os órgãos devem resolver os fatores urbanos.
 Cada resposta vem com \emph{provenance} (origem dos dados e nível de
 confiança).
 
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
   \figfile{06_secao_s3_resumo.png}{0.95\linewidth}
   \caption{Seção 3 — Resumo executivo com proveniência.}
@@ -204,7 +205,7 @@ comparável nos dados disponíveis, a métrica de \emph{variação vs.\
 período anterior} não é exibida (omissão honesta em vez de cálculo
 inventado).
 
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
   \figfile{07_secao_s4_ocorrencias.png}{0.95\linewidth}
   \caption{Seção 4 — Indicadores de ocorrências e período do piloto.}
@@ -216,7 +217,7 @@ Mapa de calor 7$\times$24 (dia da semana $\times$ hora) que mostra os
 picos de incidência na área. Acompanha uma síntese textual gerada pela
 IA, com proveniência.
 
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
   \figfile{08_secao_s5_temporal.png}{0.95\linewidth}
   \caption{Seção 5 — Mapa de calor temporal.}
@@ -229,7 +230,7 @@ observados, extraída do texto livre de RELINTs e Disque Denúncia. Cada
 afirmação cita a fonte literal e o nível de confiança --- \emph{texto
 livre é tratado como indício, não como fato}.
 
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
   \figfile{09_secao_s6_dinamica.png}{0.95\linewidth}
   \caption{Seção 6 — Dinâmica criminal com proveniência.}
@@ -246,7 +247,7 @@ extraído de RELINT e Disque Denúncia, tratado como inteligência, não
 como fato. A sugestão \emph{não usa} o escore de prioridade da S10. A
 decisão final é sempre do gestor.
 
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
   \figfile{10_secao_s7_efetivo.png}{0.95\linewidth}
   \caption{Seção 7 — Sugestão de emprego do efetivo, com explicação dos
@@ -260,7 +261,7 @@ vegetação, calçada, lixo, mobiliário, situação de rua, trânsito),
 agregados por tipo e órgão responsável \cite{ObrienSampson2015,
 Wheeler2018}.
 
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
   \figfile{11_secao_s8_fatores.png}{0.95\linewidth}
   \caption{Seção 8 — Fatores urbanos por tipo e órgão.}
@@ -271,7 +272,7 @@ Wheeler2018}.
 Cobertura de câmeras CIVITAS/COR na área, com identificação visual de
 pontos cegos.
 
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
   \figfile{12_secao_s9_cameras.png}{0.95\linewidth}
   \caption{Seção 9 — Cobertura de câmeras.}
@@ -316,7 +317,7 @@ código (\texttt{app/backend/match/score.py}). A fórmula é exibida na
 própria tela, no painel da seção S10, para que o gestor não trabalhe com
 caixa-preta.
 
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
   \figfile{13_secao_s10_coincidencias.png}{0.95\linewidth}
   \caption{Seção 10 — Coincidências de alto risco. A nota acima do
@@ -343,7 +344,7 @@ temporal é a \emph{semana ISO}. O método dialoga com a literatura de
 \emph{near-repeat victimization} \cite{JohnsonBowers2004,
 MohlerEtAl2011} e \emph{risk terrain modeling} \cite{CaplanKennedyMiller2011}.
 
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
   \figfile{14_mapa_preditivo_geral.png}{0.95\linewidth}
   \caption{Mapa Preditivo --- visão geral, com seletor de área e painel
@@ -463,7 +464,7 @@ teste para cada horizonte de previsão:
 \noindent Resultados atuais (extraídos de
 \texttt{metricas\_validacao.csv}):
 
-\begin{table}[h]
+\begin{table}[H]
   \centering
   \caption{Métricas de validação por horizonte de previsão. Conjunto de
   teste com 156 observações em todos os horizontes; conjunto de treino
@@ -480,7 +481,7 @@ teste para cada horizonte de previsão:
   \end{tabular}
 \end{table}
 
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
   \figfile{17_metricas_tab.png}{0.7\linewidth}
   \caption{Aba ``Métricas'' do Mapa Preditivo.}
@@ -501,7 +502,7 @@ entre áreas diferentes não é diretamente comparável --- um \emph{rank
 1} em uma área pode ter risco absoluto menor que um \emph{rank 5} em
 outra. A própria tela exibe esta nota acima da tabela.
 
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
   \figfile{16_drivers_tab.png}{0.95\linewidth}
   \caption{Aba ``Drivers'' --- top hexes por área e seus contribuintes.}
@@ -541,7 +542,7 @@ justifica priorização, não causalidade. Para câmeras, há ainda
 gera correlação positiva com risco mesmo quando o efeito causal pode
 ser nulo ou negativo) \cite{LumIsaac2016, EnsignEtAl2018}.
 
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
   \figfile{19_painel_alavancas.png}{0.95\linewidth}
   \caption{Painel de variáveis acionáveis. As alavancas estão
@@ -558,14 +559,14 @@ abre um popup com:
 área(s) FM, horizonte, P(crime), decil de risco e os três fatores que
 mais explicam aquele risco.
 
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
   \figfile{14_mapa_preditivo_geral.png}{0.95\linewidth}
   \caption{Mapa interativo --- horizonte T+1.}
   \label{fig:mapa_t1}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
   \figfile{15_mapa_preditivo_area_PV.png}{0.95\linewidth}
   \caption{Mapa preditivo filtrado por área (Presidente Vargas ---
@@ -574,7 +575,7 @@ mais explicam aquele risco.
   \label{fig:mapa_polig}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
   \figfile{20_popup_hex.png}{0.7\linewidth}
   \caption{Popup detalhado de um hexágono, com os três principais
@@ -593,7 +594,7 @@ $\to$ ``Crime no mesmo trecho (1 semana antes)'';
 \texttt{n\_fat\_ilum} $\to$ ``Fator urbano: iluminação''). O nome
 técnico continua sendo a chave canônica nos CSVs.
 
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
   \figfile{18_coeficientes_tab.png}{0.95\linewidth}
   \caption{Aba ``Coeficientes'' com rótulos em português.}
