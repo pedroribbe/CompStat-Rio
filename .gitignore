@@ -25,3 +25,9 @@ dist/
 # sem dado individual) podem ser versionados.
 /dados/
 /dados_normalizados/silver/
+
+# === Modelo preditivo ===
+# Saídas auxiliares do notebook (painel hex, predições por horizonte, .tex etc.)
+# que NÃO são consumidas pelo frontend. Os artefatos consumidos vivem em
+# app/frontend/public/compstat/ e ESSES sim são versionados.
+/modelo_preditivo/output/

@@ -78,6 +78,26 @@ Sem o backend no ar, o frontend cai automaticamente para fixtures (dados de exem
 VITE_USE_FIXTURES=1 npm --prefix app/frontend run dev
 ```
 
+### Regenerar os artefatos do Mapa Preditivo
+
+O modelo logístico que gera os dados consumidos pela aba **Mapa Preditivo** vive em `modelo_preditivo/logit_compstat.ipynb`. Ele lê os CSVs em `dados/` e grava direto nos assets servidos pelo frontend (`app/frontend/public/compstat/`), além de uma saída local em `modelo_preditivo/output/` (arquivos auxiliares não consumidos pelo frontend).
+
+Passos para regerar (a partir da raiz do repo):
+
+```bash
+# 1) Instalar dependências do modelo no .venv da raiz (uma vez)
+.venv/Scripts/python -m pip install -r modelo_preditivo/requirements.txt   # Windows
+.venv/bin/python    -m pip install -r modelo_preditivo/requirements.txt   # Linux/Mac
+
+# 2) Executar o notebook headless (~1–2 min)
+cd modelo_preditivo
+../.venv/Scripts/python -c "import nbformat; from nbclient import NotebookClient; nb=nbformat.read('logit_compstat.ipynb', as_version=4); NotebookClient(nb, timeout=900, kernel_name='python3').execute(cwd='.'); nbformat.write(nb, 'logit_compstat.ipynb')"
+```
+
+Para edição interativa, abra o `.ipynb` no VS Code (suporte nativo a notebooks). Não instale o `jupyter`/`jupyterlab` no `.venv`: o caminho do OneDrive + nomes de assets do JupyterLab passam do limite de 260 caracteres do Windows e a instalação quebra.
+
+O frontend lê os CSVs **por posição de coluna**, então qualquer regeração precisa preservar a ordem das colunas dos 3 arquivos em `app/frontend/public/compstat/data/` e os nomes dos HTMLs listados em `app/frontend/src/components/predictive/predictiveMaps.ts`.
+
 ## Guardrails de IA responsável
 
 1. **Decisão final sempre humana.** O sistema gera rascunho + score + justificativa; a equipe valida antes de agir. O relatório exportado é marcado como "RASCUNHO".

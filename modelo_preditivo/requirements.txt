@@ -1,0 +1,38 @@
+# Dependências do modelo logístico de previsão de crime (logit_compstat.ipynb).
+# Instalar no .venv da raiz do repositório:
+#   .venv/Scripts/python -m pip install -r modelo_preditivo/requirements.txt   (Windows)
+#   .venv/bin/python -m pip install -r modelo_preditivo/requirements.txt       (Linux/Mac)
+#
+# As versões mínimas refletem o que a base de código atual exige (h3 API v4).
+
+# Núcleo numérico
+pandas>=2.0
+numpy>=1.24
+
+# Geoespacial
+h3>=4.0
+shapely>=2.0
+pyproj>=3.6
+geopandas>=0.14
+
+# ML
+scikit-learn>=1.3
+
+# Estatística espacial e econometria
+libpysal>=4.9
+esda>=2.5
+statsmodels>=0.14
+
+# Visualização
+folium>=0.15
+matplotlib>=3.7
+
+# Notebook (somente o mínimo para execução headless via `nbclient`).
+# Evitamos o meta-pacote `jupyter`/`jupyterlab`: ele traz assets do JupyterLab
+# com caminhos muito longos que colidem com o limite do Windows (260 chars),
+# especialmente quando o repo está dentro do OneDrive. Para edição interativa,
+# abra o .ipynb no VS Code (suporta notebooks nativamente, sem precisar do
+# JupyterLab no .venv).
+nbclient>=0.9
+ipykernel>=6.27
+nbformat>=5.10
