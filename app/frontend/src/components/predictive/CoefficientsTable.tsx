@@ -2,6 +2,7 @@
 // Ordenados pelo impacto no T+1 (distância de 1, em qualquer direção).
 import { useQuery } from '@tanstack/react-query'
 import { fetchCoeficientes } from './predictiveData'
+import { featureLabel } from './featureLabels'
 
 export function CoefficientsTable() {
   const { data, isLoading, isError } = useQuery({
@@ -41,7 +42,7 @@ export function CoefficientsTable() {
               const dir = c.oddsRatioS1 > 1 ? 'up' : c.oddsRatioS1 < 1 ? 'down' : 'flat'
               return (
                 <tr key={c.feature}>
-                  <td className="pred-coef__feat">{c.feature}</td>
+                  <td className="pred-coef__feat">{featureLabel(c.feature)}</td>
                   <td className={`pred-table__num tnum pred-or pred-or--${dir}`}>
                     {c.oddsRatioS1.toFixed(2)}
                   </td>
