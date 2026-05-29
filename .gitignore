@@ -33,11 +33,12 @@ dist/
 /modelo_preditivo/output/
 
 # === Artefatos de compilação LaTeX (docs/guia/) ===
-# O .tex é versionado; o PDF e os arquivos auxiliares (aux, log, toc, out)
-# são gerados localmente ou no Overleaf.
+# O .tex é versionado; arquivos auxiliares (aux, log, toc, out) são gerados
+# localmente ou no Overleaf. O PDF do guia oficial é versionado como entregável.
 /docs/guia/*.aux
 /docs/guia/*.log
 /docs/guia/*.out
 /docs/guia/*.toc
 /docs/guia/*.pdf
+!/docs/guia/guia_compstat_rio.pdf
 /docs/guia/*.synctex.gz

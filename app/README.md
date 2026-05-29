@@ -6,6 +6,10 @@ de negócio) e **editável**, com um **motor de match** (o "bingo": cruza mancha
 urbano × dinâmica criminal × cobertura de câmera) e um **copiloto** que consulta as tabelas e
 propõe reescritas. Decisão final sempre humana.
 
+> 🚀 **Esta é uma aplicação para ser executada localmente.** Backend (FastAPI) + Frontend
+> (React/Vite) precisam ser subidos para uso real — veja [Como rodar](#como-rodar). Sem
+> backend, o frontend cai em fixtures de demonstração.
+
 ## Arquitetura
 - **Backend** `app/backend` — FastAPI + DuckDB (lê os CSVs `dados_normalizados/`), motor de match
   (DuckDB spatial), síntese e copiloto via Claude (`claude-sonnet-4-6`), export DOCX.
@@ -56,3 +60,7 @@ cita a fonte de toda conclusão · LGPD (dados despersonalizados; copiloto sem S
 - A `ANTHROPIC_API_KEY` vive só no `.env` local (gitignored). **Revogue/gere outra após o evento.**
 - Dados com PII (`dados/`, `dinamica_extraida.csv`, etc.) estão no `.gitignore`; alguns brutos já
   estavam no histórico do git — ver pendência no plano.
+
+---
+
+Aplicação desenvolvida por **Arthur Vasconcellos**, **Pedro Forlevezi**, **Pedro Ribbe** e **Pedro Rezende** para o **Claude Impact Lab Rio 2026**.

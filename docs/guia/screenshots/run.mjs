@@ -1,4 +1,4 @@
-// Geração dos 20 screenshots referenciados em docs/guia/guia_compstat_rio_arthur_lins.tex.
+// Geração dos 20 screenshots referenciados em docs/guia/guia_compstat_rio.tex.
 // Pré-requisito: backend em :8010 e frontend em :5173 no ar.
 // Cada figura é capturada num try/catch isolado: falha em uma não derruba as outras.
 

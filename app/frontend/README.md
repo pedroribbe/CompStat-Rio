@@ -1,73 +1,40 @@
-# React + TypeScript + Vite
+# CompStat Rio — Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplicação web do CompStat Rio: SPA em **React + Vite + TypeScript + MapLibre** que renderiza o Relatório Analítico de Área, o Mapa Preditivo (logit) e o copiloto lateral.
 
-Currently, two official plugins are available:
+> 🚀 **Esta é uma aplicação para ser executada localmente.** Sem o backend FastAPI no ar (porta 8010), o frontend cai automaticamente em fixtures de demonstração (área Presidente Vargas).
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Como rodar
 
-## React Compiler
+A partir da **raiz do repositório**:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```bash
+# Backend (porta 8010) — Linux/Mac
+PYTHONPATH="$PWD" .venv/bin/uvicorn app.backend.main:app --host 127.0.0.1 --port 8010
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Frontend (porta 5173)
+npm --prefix app/frontend run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Para Windows/PowerShell e o passo a passo completo, ver o [README da aplicação](../README.md) e o [CLAUDE.md](../../CLAUDE.md) na raiz.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Abre em **http://localhost:5173** — o proxy do Vite redireciona `/api` para o backend.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Forçar fixtures (sem backend)
+
+```bash
+VITE_USE_FIXTURES=1 npm --prefix app/frontend run dev
 ```
+
+## Arquitetura
+
+- Mapa interativo (MapLibre) com heatmap, polígonos de área, câmeras e fatores urbanos.
+- Painel de coincidências com ProvenanceCard (citação literal e nível de confiança).
+- Copiloto lateral com chat, ferramentas consultáveis e sugestão de reescrita.
+- Mapa Preditivo (logit) com drivers, métricas e coeficientes em português.
+
+Veja [`src/components/`](src/components/) para a estrutura por seção (S1–S10).
+
+---
+
+Aplicação desenvolvida por **Arthur Vasconcellos**, **Pedro Forlevezi**, **Pedro Ribbe** e **Pedro Rezende** para o **Claude Impact Lab Rio 2026**.

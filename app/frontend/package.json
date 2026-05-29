@@ -2,6 +2,8 @@
   "name": "frontend",
   "private": true,
   "version": "0.0.0",
+  "description": "Frontend (React + Vite + TypeScript + MapLibre) do CompStat Rio — Claude Impact Lab Rio 2026.",
+  "author": "Arthur Vasconcellos, Pedro Forlevezi, Pedro Ribbe e Pedro Rezende",
   "type": "module",
   "scripts": {
     "dev": "vite",
